@@ -519,6 +519,14 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    // Build share URLs
+    const activityDescription = details.description || "";
+    const activityLink = window.location.href.split("?")[0] + `?activity=${encodeURIComponent(name)}`;
+    const shareText = encodeURIComponent(`Check out "${name}" at Mergington High School! ${activityDescription}`);
+    const shareUrl = encodeURIComponent(activityLink);
+    const twitterUrl = `https://twitter.com/intent/tweet?text=${shareText}&url=${shareUrl}`;
+    const facebookUrl = `https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&quote=${shareText}`;
+
     activityCard.innerHTML = `
       ${tagHtml}
       <h4>${name}</h4>
@@ -551,6 +559,12 @@ document.addEventListener("DOMContentLoaded", () => {
             )
             .join("")}
         </ul>
+      </div>
+      <div class="social-share">
+        <span class="social-share-label">Share:</span>
+        <a class="share-btn share-twitter" href="${twitterUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share on X (Twitter)">𝕏</a>
+        <a class="share-btn share-facebook" href="${facebookUrl}" target="_blank" rel="noopener noreferrer" aria-label="Share on Facebook">f</a>
+        <button class="share-btn share-copy" data-activity="${name}" aria-label="Copy link">🔗</button>
       </div>
       <div class="activity-card-actions">
         ${
@@ -586,6 +600,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handler for copy link button
+    const copyButton = activityCard.querySelector(".share-copy");
+    copyButton.addEventListener("click", () => {
+      navigator.clipboard.writeText(activityLink).then(() => {
+        showMessage(`Link for "${name}" copied to clipboard!`, "success");
+      }).catch(() => {
+        showMessage("Could not copy link. Please copy the URL manually.", "error");
+      });
+    });
 
     activitiesList.appendChild(activityCard);
   }
